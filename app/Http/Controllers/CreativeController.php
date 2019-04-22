@@ -72,7 +72,7 @@ class CreativeController extends Controller
       //$images = $dom->getElementsByTagName('img');
 
 
-      return redirect('/form');
+      return redirect('/creatives');
     }
 
     /**
