@@ -32,22 +32,13 @@ class inlineCss implements ShouldQueue
      */
     public function handle()
     {
-      $file = \Storage::get($this->creative->originalFile_Loc);
-      dd($file);
       //get contents of uploaded file as a string
-      $stringVersionOfFile = file_get_contents($file);
-      //dd($stringVersionOfFile);
+      $file = \Storage::get($this->creative->originalFile_Loc);
 
       //inline CSS
-      $stringVersionOfFileCssInline = app('Emogrifier')->parse($file);
-      //file_put_contents('creatives-inlinedCss/CssInlined-' . time() . '-' . $file->getClientOriginalName(), app('Emogrifier')->parse($stringVersionOfFile));
-      //dd($modifiedFile);
-
-
-
-      Storage::put('creatives-inlinedCss/CssInlined-' . time() . '-' . $file->getClientOriginalName());
+      $fileWithInlinedCss = app('Emogrifier')->parse($file);
 
       //stores file with inlinedCSS
-      $file->storeAs('creatives-inlinedCss', 'CssInlined-' . time() . '-' . $file->getClientOriginalName());
+      \Storage::put('creatives-inlinedCss/CssInlined-' . str_replace("creatives-original/", "", $this->creative->originalFile_Loc), $fileWithInlinedCss);
     }
 }
