@@ -24,6 +24,7 @@ class CreateCreativesTable extends Migration
           $table->string('contract');
           $table->text('info')->nullable();
           $table->string('originalFile_Loc');
+          $table->string('processingFile_Loc');
           $table->timestamps();
         });
     }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Creative;
 use Illuminate\Http\Request;
 use App\Jobs\Creatives\inlineCss;
+use App\Jobs\Creatives\ProcessHTML;
+use App\Jobs\Creatives\ReHostImages;
 
 class CreativeController extends Controller
 {
@@ -65,7 +67,7 @@ class CreativeController extends Controller
       //store original file and record location
       $creative->originalFile_Loc = $file->storeAs('creatives-original',  time() . '-' . $file->getClientOriginalName());
       //dd($creative->originalFile_Loc);
-
+      $creative->processingFile_Loc = $file->storeAs('creatives-processing',  time() . '-' . $file->getClientOriginalName());
       //save to database
       $creative->save();
 
@@ -73,14 +75,10 @@ class CreativeController extends Controller
       //appropriate place
 
       //!!!!!I feel like the below could be done in a job
-      inlineCss::dispatch($creative);
-
-
-      //$dom = new \DOMDocument;
-      //$dom->loadHTML($file);
-      //dd($dom);
-      //$images = $dom->getElementsByTagName('img');
-
+      ProcessHTML::withChain([
+          new inlineCss($creative),
+          new ReHostImages($creative)
+      ])->dispatch($creative);
 
       return redirect('/creatives');
     }
